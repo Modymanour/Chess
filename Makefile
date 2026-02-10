@@ -1,6 +1,6 @@
 CXX = g++
 CXXFLAGS = -g -I src/Headers
-SRCS = $(wildcard src/*.cpp src/Pieces/*.cpp)
+SRCS = $(wildcard src/*.cpp src/Pieces/*.cpp src/board/*.cpp)
 TARGET = build/main.exe
 
 all: $(TARGET)

@@ -62,7 +62,7 @@ void Board::updateBoard() {
 void Board::updatePossibleMoves() {
 }
 
-bool Board::movePiece(int startX, int startY, int endX, int endY) {
+bool Board::movePiece(pair<std::string, int> startPos, pair<std::string, int> endPos) {
     return false;
 }
 

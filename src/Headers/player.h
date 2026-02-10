@@ -3,15 +3,16 @@
 #include <string>
 #include <utility>
 #include "piece.h"
-#include "blackpieces.h"
-#include "whitePieces.h"
 using namespace std;
+
+// Forward declaration to avoid circular inclusion
+class Manager;
+
 class Player {
 public:
     std::string name;
     bool isWhite;
-    WhitePieces* whitePieces;
-    BlackPieces* blackPieces;
+    Manager* manager;
     Player(string name, bool isWhite);
     void addPiece(Piece* piece);
     void removePiece(Piece* piece);

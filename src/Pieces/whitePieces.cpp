@@ -4,12 +4,10 @@
 using namespace std;
 
 WhitePieces::WhitePieces(){
-    this->player = nullptr;
     totalCapturedPieces = 0;
 }
 
-void WhitePieces::initializePieces(Board* board, Player* player){
-        this->player = player;
+void WhitePieces::initializePieces(Board* board){
         // Initialize pawns
         for(int i = 0; i < 8; i++){
             pieces.push_back(new Pawn(true, board->boardCells[1][i].position));

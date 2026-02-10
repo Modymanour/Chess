@@ -18,16 +18,14 @@ Manager* Manager::getInstance() {
 }
 void Manager::initializeGame() {
     isWhiteTurn = true;
-    if(board == nullptr) board = Board::getInstance();
-    else board->initializeBoard();
+    board = Board::getInstance();
     if(whitePieces == nullptr) whitePieces = new WhitePieces();
     else whitePieces->pieces.clear();
     if(blackPieces == nullptr) blackPieces = new BlackPieces();
     else blackPieces->pieces.clear();
-    board->initializeBoard();
     
-    whitePieces->initializePieces(board, nullptr);
-    blackPieces->initializePieces(board, nullptr);
+    whitePieces->initializePieces(board);
+    blackPieces->initializePieces(board);
 }
 void Manager::displayBoard() {
     board->displayBoard();

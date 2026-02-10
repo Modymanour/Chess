@@ -1,7 +1,6 @@
 #pragma once
 #include "board.h"
-#include "whitePieces.h"
-#include "blackpieces.h"
+#include "player.h"
 //This class is going to be a singleton
 class Manager {
     public:

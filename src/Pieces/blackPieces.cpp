@@ -4,12 +4,10 @@
 using namespace std;
 
 BlackPieces::BlackPieces(){
-    this->player = nullptr;
     totalCapturedPieces = 0;
 }
 
-void BlackPieces::initializePieces(Board* board, Player* player){
-        this->player = player;
+void BlackPieces::initializePieces(Board* board){
         // Initialize pawns
         for(int i = 0; i < 8; i++){
             pieces.push_back(new Pawn(false, board->boardCells[6][i].position));

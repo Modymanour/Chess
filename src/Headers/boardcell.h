@@ -3,7 +3,6 @@
 #include <string>
 #include <utility>
 #include "piece.h"
-#include "player.h"
 //This class is going to be a singleton
 class Boardcell {
 public:

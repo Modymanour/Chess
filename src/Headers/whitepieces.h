@@ -8,21 +8,19 @@
 #include "bishop.h"
 #include "queen.h"
 #include "king.h"
-#include "player.h"
+#include "board.h"
 
-//to stop circular dependency
-class Board;
+
 
 class WhitePieces {
 public:
     std::vector<Piece*> pieces;
-    Player* player;
     int totalCapturedPieces;
     WhitePieces();
-    void initializePieces(Board* board, Player* player);
+    void initializePieces(Board* board);
     void displayPieces();
     void addPiece(Piece* piece);
     void removePiece(Piece* piece);
-    void movePiece(pair<std::string, int> startPos, pair<std::string, int> endPos);
+    void movePiece(std::pair<std::string, int> startPos, std::pair<std::string, int> endPos);
     ~WhitePieces();
 };

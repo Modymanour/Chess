@@ -1,4 +1,4 @@
-#include "Headers/boardcell.h"
+#include "boardcell.h"
 Boardcell::Boardcell(std::pair<std::string, int> position) {
     this->position = position;
     this->isEmpty = true;

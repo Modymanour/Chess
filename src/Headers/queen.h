@@ -2,12 +2,11 @@
 #include <vector>
 #include <utility>
 #include "piece.h"
-#include "board.h"
 class Queen : public Piece {
 public:
-    Queen(bool isWhite, pair<string, int> position);
+    Queen(bool isWhite, std::pair<std::string, int> position);
     bool isValidMove(const std::pair<std::string, int>& startPos, const std::pair<std::string, int>& endPos) override;
-    void updatePossibleMoves(const vector<pair<string, int>>& board) override;
-    void move(const pair<string, int>& startPos, const pair<string, int>& endPos) override;
+    void updatePossibleMoves(const std::vector<std::pair<std::string, int>>& board) override;
+    void move(const std::pair<std::string, int>& startPos, const std::pair<std::string, int>& endPos) override;
     ~Queen () = default;
 };
