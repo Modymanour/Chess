@@ -10,7 +10,7 @@
 #include "king.h"
 #include "board.h"
 
-
+class Board;
 
 class BlackPieces {
 public:

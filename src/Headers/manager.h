@@ -12,6 +12,7 @@ class Manager {
     static Manager* getInstance();
     void initializeGame();
     void displayBoard();
+    void displayPiecePossibleMoves(std::pair<std::string, int> position);
     void startGame();
     void switchTurn();
     void saveGame();

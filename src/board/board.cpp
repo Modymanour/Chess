@@ -1,5 +1,6 @@
 #include <iostream>
 #include "../Headers/board.h"
+#include <iomanip>
 using namespace std;
 
 Board* Board::instance = nullptr;
@@ -29,28 +30,36 @@ void Board::initializeBoard() {
 void Board::displayBoard() {
     if(isWhiteTurn) {
         //white's prespective
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
+        for(int i=0; i<8;i++){
+            cout << setw(5) << string(1, "abcdefgh"[i]);
+        }
+        cout << endl;
+        for (int i = 7; i >= 0; i--) {
+            for (int j = 7; j >= 0; j--) {
                 if (boardCells[i][j].isEmpty) {
-                    cout << ". ";
+                    cout << setw(5) << ".";
                 } else {
-                    cout << boardCells[i][j].piece->abrvName << " ";
+                    cout << setw(5) << boardCells[i][j].piece->abrvName;
                 }
             }
-            cout << 8-i <<  endl;
+            cout << setw(3) << i+1 <<  endl;
         }
     }
     else{
         //black's prespective
-        for (int i = 8; i > 0; i--) {
-            for (int j = 8; j > 0; j--) {
+        for(int i=0; i<8;i++){
+            cout << setw(5) << string(1, "abcdefgh"[i]);
+        }
+        cout << endl;
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
                 if (boardCells[i][j].isEmpty) {
-                    cout << ". ";
+                    cout << setw(5) << ".";
                 } else {
-                    cout << boardCells[i][j].piece->abrvName << " ";
+                    cout << setw(5) << boardCells[i][j].piece->abrvName;
                 }
             }
-            cout << i <<  endl;
+            cout << setw(3) << 8-i <<  endl;
         }
     }
     
