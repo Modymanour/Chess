@@ -3,7 +3,9 @@
 #include <string>
 #include <utility>
 #include "piece.h"
-//This class is going to be a singleton
+
+class Piece;
+
 class Boardcell {
 public:
     bool isEmpty;

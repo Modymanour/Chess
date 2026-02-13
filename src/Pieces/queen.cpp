@@ -12,11 +12,15 @@ bool Queen::isValidMove(const pair<string, int>& startPos, const pair<string, in
     if(startPos.first > "h" || startPos.first < "a" || startPos.second > 8 || startPos.second < 1) {
         return false;
     }
+    return false;
+}
+void Queen::updatePossibleMoves(const vector<vector<Boardcell>>& board) {
+    return;
+}
+bool Queen::move(const pair<string, int>& startPos, const pair<string, int>& endPos, vector<vector<Boardcell>>& board) {
+    if(!isValidMove(startPos, endPos)) return false ;
+    board[endPos.second - 1][endPos.first[0] - 'a'].assignPiece(this);
+    board[startPos.second - 1][startPos.first[0] - 'a'].removePiece();
+    position = endPos;
     return true;
-}
-void Queen::updatePossibleMoves(const vector<pair<string, int>>& board) {
-    return;
-}
-void Queen::move(const pair<string, int>& startPos, const pair<string, int>& endPos) {
-    return;
 }

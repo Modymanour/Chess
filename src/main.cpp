@@ -11,7 +11,8 @@ int main() {
     cout << "Hello, Chess!" << endl;
     Manager* manager = Manager::getInstance();
     manager->initializeGame();
-    manager->displayBoard();
+    manager->displayPieces();
+    manager->startGame();
     cin.get();
     return 0;
 }   

@@ -8,6 +8,7 @@ WhitePieces::WhitePieces(){
 }
 
 void WhitePieces::initializePieces(Board* board){
+        this->board = board;
         // Initialize pawns
         for(int i = 0; i < 8; i++){
             pieces.push_back(new Pawn(true, board->boardCells[1][i].position));
@@ -78,6 +79,6 @@ void WhitePieces::initializePieces(Board* board){
             cout << "Invalid move: Move not valid for the piece." << endl;
             return;
         }
-        pieceToMove->move(startPos, endPos);
+        pieceToMove->move(startPos, endPos, board->boardCells);
         cout << "Moved " << pieceToMove->abrvName << " from " << startPos.first << startPos.second << " to " << endPos.first << endPos.second << endl;
     }

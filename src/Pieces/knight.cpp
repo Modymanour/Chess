@@ -15,9 +15,13 @@ bool Knight::isValidMove(const pair<string, int>& startPos, const pair<string, i
     }
     return false;
 }
-void Knight::updatePossibleMoves(const vector<pair<string, int>>& board) {
+void Knight::updatePossibleMoves(const vector<vector<Boardcell>>& board) {
     return;
 }
-void Knight::move(const pair<string, int>& startPos, const pair<string, int>& endPos) {
-    return;
+bool Knight::move(const pair<string, int>& startPos, const pair<string, int>& endPos, vector<vector<Boardcell>>& board) {
+    if(!isValidMove(startPos, endPos)) return false ;
+    board[endPos.second - 1][endPos.first[0] - 'a'].assignPiece(this);
+    board[startPos.second - 1][startPos.first[0] - 'a'].removePiece();
+    position = endPos;
+    return true;
 }

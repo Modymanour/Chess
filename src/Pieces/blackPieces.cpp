@@ -8,6 +8,7 @@ BlackPieces::BlackPieces(){
 }
 
 void BlackPieces::initializePieces(Board* board){
+        this->board = board;
         // Initialize pawns
         for(int i = 0; i < 8; i++){
             pieces.push_back(new Pawn(false, board->boardCells[6][i].position));
@@ -78,6 +79,6 @@ void BlackPieces::initializePieces(Board* board){
             cout << "Invalid move: Move not valid for the piece." << endl;
             return;
         }
-        pieceToMove->move(startPos, endPos);
+        pieceToMove->move(startPos, endPos, board->boardCells);
         cout << "Moved " << pieceToMove->abrvName << " from " << startPos.first << startPos.second << " to " << endPos.first << endPos.second << endl;
     }

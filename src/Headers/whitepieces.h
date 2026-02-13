@@ -16,6 +16,7 @@ class WhitePieces {
 public:
     std::vector<Piece*> pieces;
     int totalCapturedPieces;
+    Board* board;
     WhitePieces();
     void initializePieces(Board* board);
     void displayPieces();

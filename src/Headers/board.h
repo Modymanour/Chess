@@ -23,6 +23,7 @@ public:
     static Board* getInstance();
     void initializeBoard();
     void displayBoard();
+    void displayPieces();
     void updateBoard();
     void updatePossibleMoves();
     bool movePiece(std::pair<std::string, int> startPos, std::pair<std::string, int> endPos);

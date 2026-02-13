@@ -26,9 +26,28 @@ void Manager::initializeGame() {
     
     whitePieces->initializePieces(board);
     blackPieces->initializePieces(board);
+    board->updatePossibleMoves();
 }
 void Manager::displayBoard() {
     board->displayBoard();
+}
+void Manager::displayPiecePossibleMoves(pair<string, int> position) {
+    for(auto& row : board->boardCells) {
+        for(auto& cell : row) {
+            if(!cell.isEmpty && cell.position == position) {
+                cout << "Possible moves for " << cell.piece->abrvName << " at " << cell.position.first << cell.position.second << ":" << endl;
+                for(auto& move : cell.piece->possibleMoves) {
+                    cout << move.first << move.second << " ";
+                }
+                cout << endl;
+                return;
+            }
+        }
+    }
+    cout << "No piece found at the given position." << endl;
+}
+void Manager::displayPieces() {
+    board->displayPieces();
 }
 void Manager::startGame() {
     while (!isGameOver) {
@@ -39,10 +58,22 @@ void Manager::startGame() {
             cout << "Black's turn" << endl;
         }
         string startPos, endPos;
+        cout << "Enter move (e.g., e2 e4): ";
+        cin >> startPos >> endPos;
+        makeMove({startPos.substr(0, 1), stoi(startPos.substr(1))}, {endPos.substr(0, 1), stoi(endPos.substr(1))});
     }
 }
 void Manager::switchTurn() {
     isWhiteTurn = !isWhiteTurn;
+    board->isWhiteTurn = isWhiteTurn;
+    board->updatePossibleMoves();
+}
+void Manager::makeMove(std::pair<std::string, int> startPos, std::pair<std::string, int> endPos) {
+    if(board->movePiece(startPos, endPos)) {
+        switchTurn();
+    } else {
+        cout << "Invalid move try again." << endl;
+    }
 }
 void Manager::saveGame() {
 

@@ -16,6 +16,7 @@ class BlackPieces {
 public:
     std::vector<Piece*> pieces;
     int totalCapturedPieces;
+    Board* board;
     BlackPieces();
     void initializePieces(Board* board);
     void displayPieces();

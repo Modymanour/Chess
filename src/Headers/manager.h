@@ -13,8 +13,10 @@ class Manager {
     void initializeGame();
     void displayBoard();
     void displayPiecePossibleMoves(std::pair<std::string, int> position);
+    void displayPieces();
     void startGame();
     void switchTurn();
+    void makeMove(std::pair<std::string, int> startPos, std::pair<std::string, int> endPos);
     void saveGame();
     void loadGame();
     void endGame();

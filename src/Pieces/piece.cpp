@@ -9,5 +9,6 @@ Piece::Piece(bool isWhite, pair<string, int> position){
 Piece::~Piece() {
 }
 
-void Piece::move(const pair<string, int>& startPos, const pair<string, int>& endPos) {
+bool Piece::move(const pair<string, int>& startPos, const pair<string, int>& endPos, vector<vector<Boardcell>>& board) {
+    return false;
 }
