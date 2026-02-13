@@ -52,14 +52,14 @@ void Board::displayBoard() {
         }
         cout << endl;
         for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
+            for (int j = 7; j >= 0; j--) {
                 if (boardCells[i][j].isEmpty) {
                     cout << setw(5) << ".";
                 } else {
                     cout << setw(5) << boardCells[i][j].piece->abrvName;
                 }
             }
-            cout << setw(3) << 8-i <<  endl;
+            cout << setw(3) << i+1 <<  endl;
         }
     }
     
