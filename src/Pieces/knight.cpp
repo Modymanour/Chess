@@ -7,16 +7,12 @@ Knight::Knight(bool isWhite, pair<string, int> position) : Piece(isWhite, positi
     val = 3;
 }
 bool Knight::isValidMove(const pair<string, int>& startPos, const pair<string, int>& endPos) {
-    if(startPos.first == endPos.first || startPos.second == endPos.second) {
-        return false;
-    }
-    if(startPos.first > "h" || startPos.first < "a" || startPos.second > 8 || startPos.second < 1) {
-        return false;
-    }
-    return false;
+    return find(possibleMoves.begin(), possibleMoves.end(), endPos) != possibleMoves.end();
 }
 void Knight::updatePossibleMoves(const vector<vector<Boardcell>>& board) {
-    return;
+    possibleMoves.clear();
+    vector<pair<string, int>> knightMoves = movement::knightMove(position, board);
+    possibleMoves.insert(possibleMoves.end(), knightMoves.begin(), knightMoves.end());
 }
 bool Knight::move(const pair<string, int>& startPos, const pair<string, int>& endPos, vector<vector<Boardcell>>& board) {
     if(!isValidMove(startPos, endPos)) return false ;

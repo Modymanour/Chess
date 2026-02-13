@@ -18,18 +18,26 @@ void Pawn::updatePossibleMoves(const std::vector<std::vector<Boardcell>>& board)
     if(board[row + direction][col[0]-'a'].isEmpty) {
         possibleMoves.push_back(make_pair(col,row + direction+1));
     }
-    //check if the pawn haven't moved yet to give it the option to move 2 cells forward
-    if(!hasMoved){
-        if(board[row + 2*direction][col[0]-'a'].isEmpty) {
-            possibleMoves.push_back(make_pair(col,row + 2*direction+1));
-        }
-    }
+    
+    
     //check if the diagonal cells have an opponent piece to capture
     if(position.first != "a" && !board[row + direction][col[0]-'a'-1].isEmpty && board[row + direction][col[0]-'a'-1].piece->isWhite != isWhite) {
         possibleMoves.push_back(make_pair(string(1, col[0]-1), row + direction+1));
+        //check if the pawn haven't moved yet to give it the option to move 2 cells forward
+        if(!hasMoved){
+            if(board[row + 2*direction][col[0]-'a'].isEmpty) {
+                possibleMoves.push_back(make_pair(col,row + 2*direction+1));
+            }
+        }
     }
     if(position.first != "h" && !board[row + direction][col[0]-'a'+1].isEmpty && board[row + direction][col[0]-'a'+1].piece->isWhite != isWhite) {
         possibleMoves.push_back(make_pair(string(1, col[0]+1), row + direction+1));
+        //check if the pawn haven't moved yet to give it the option to move 2 cells forward
+        if(!hasMoved){
+            if(board[row + 2*direction][col[0]-'a'].isEmpty) {
+                possibleMoves.push_back(make_pair(col,row + 2*direction+1));
+            }
+        }
     }
 }
 
