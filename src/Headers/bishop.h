@@ -2,6 +2,7 @@
 #include <vector>
 #include <utility>
 #include "piece.h"
+#include "piecesMovement.h"
 class Bishop : public Piece {
 public:
     Bishop(bool isWhite, std::pair<std::string, int> position);

@@ -6,16 +6,12 @@ Bishop::Bishop(bool isWhite, pair<string, int> position) : Piece(isWhite, positi
     val = 3;
 }
 bool Bishop::isValidMove(const pair<string, int>& startPos, const pair<string, int>& endPos) {
-    if(startPos.first == endPos.first || startPos.second == endPos.second) {
-        return false;
-    }
-    if(startPos.first > "h" || startPos.first < "a" || startPos.second > 8 || startPos.second < 1) {
-        return false;
-    }
-    return false;
+    return find(possibleMoves.begin(), possibleMoves.end(), endPos) != possibleMoves.end();
 }
 void Bishop::updatePossibleMoves(const vector<vector<Boardcell>>& board) {
-    return;
+    possibleMoves.clear();
+    vector<pair<string, int>> diagonalMoves = movement::diagonalMove(position, board);
+    possibleMoves.insert(possibleMoves.end(), diagonalMoves.begin(), diagonalMoves.end());
 }
 bool Bishop::move(const pair<string, int>& startPos, const pair<string, int>& endPos, vector<vector<Boardcell>>& board) {
     if(!isValidMove(startPos, endPos)) return false ;
