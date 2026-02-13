@@ -1,0 +1,168 @@
+#include "../Headers/piecesMovement.h"
+
+vector<pair<string, int>> movement::diagonalMove(const pair<string, int>& startPos,const vector<vector<Boardcell>>& board) {
+    vector<pair<string, int>> possibleMoves;
+    int col = startPos.first[0] - 'a';
+    int row = startPos.second - 1;
+    Piece* piece = board[startPos.second - 1][startPos.first[0] - 'a'].piece;
+    //down left
+    col--;
+    row--;
+    while(col >= 0 && row >= 0) {
+        if(board[row][col].isEmpty) {
+            possibleMoves.push_back(make_pair(string(1, col + 'a'), row + 1));
+        } else {
+            if(board[row][col].piece->isWhite != piece->isWhite) {
+                possibleMoves.push_back(make_pair(string(1, col + 'a'), row + 1));
+            }
+            break;
+        }
+        col--;
+        row--;
+    }
+    col = startPos.first[0] - 'a';
+    row = startPos.second - 1;
+    //down right
+    col++;
+    row--;
+    while(col < 8 && row >= 0) {
+        if(board[row][col].isEmpty) {
+            possibleMoves.push_back(make_pair(string(1, col + 'a'), row + 1));
+        } else {
+            if(board[row][col].piece->isWhite != piece->isWhite) {
+                possibleMoves.push_back(make_pair(string(1, col + 'a'), row + 1));
+            }
+            break;
+        }
+        col++;
+        row--;
+    }
+    col = startPos.first[0] - 'a';
+    row = startPos.second - 1;
+    //up left
+    col--;
+    row++;
+    while(col >= 0 && row < 8) {
+        if(board[row][col].isEmpty) {
+            possibleMoves.push_back(make_pair(string(1, col + 'a'), row + 1));
+        } else {
+            if(board[row][col].piece->isWhite != piece->isWhite) {
+                possibleMoves.push_back(make_pair(string(1, col + 'a'), row + 1));
+            }
+            break;
+        }
+        col--;
+        row++;
+    }
+    col = startPos.first[0] - 'a';
+    row = startPos.second - 1;
+    //up right
+    col++;
+    row++;
+    while(col < 8 && row < 8) {
+        if(board[row][col].isEmpty) {
+            possibleMoves.push_back(make_pair(string(1, col + 'a'), row + 1));
+        } else {
+            if(board[row][col].piece->isWhite != piece->isWhite) {
+                possibleMoves.push_back(make_pair(string(1, col + 'a'), row + 1));
+            }
+            break;
+        }
+        col++;
+        row++;
+    }
+    return possibleMoves;
+}
+
+vector<pair<string, int>> movement::horizontalMove(const pair<string, int>& startPos, const vector<vector<Boardcell>>& board) {
+    vector<pair<string, int>> possibleMoves;
+    int col = startPos.first[0] - 'a';
+    int row = startPos.second - 1;
+    Piece* piece = board[startPos.second - 1][startPos.first[0] - 'a'].piece;
+    //left
+    col--;
+    while(col >= 0) {
+        cout<< "Checking horizontal left at " << string(1, col + 'a') << row + 1 <<"for " << piece->abrvName << endl;
+        if(board[row][col].isEmpty) {
+            possibleMoves.push_back(make_pair(string(1, col + 'a'), row + 1));
+        } else {
+            if(board[row][col].piece->isWhite != piece->isWhite) {
+                possibleMoves.push_back(make_pair(string(1, col + 'a'), row + 1));
+            }
+            break;
+        }
+        col--;
+    }
+    col = startPos.first[0] - 'a';
+    //right
+    col++;
+    while(col < 8) {
+        cout<< "Checking horizontal right at " << string(1, col + 'a') << row + 1 <<"for " << piece->abrvName << endl;
+        if(board[row][col].isEmpty) {
+            possibleMoves.push_back(make_pair(string(1, col + 'a'), row + 1));
+        } else {
+            if(board[row][col].piece->isWhite != piece->isWhite) {
+                possibleMoves.push_back(make_pair(string(1, col + 'a'), row + 1));
+            }
+            break;
+        }
+        col++;
+    }
+    return possibleMoves;
+}
+vector<pair<string, int>> movement::verticalMove(const pair<string, int>& startPos, const vector<vector<Boardcell>>& board) {
+    vector<pair<string, int>> possibleMoves;
+    int col = startPos.first[0] - 'a';
+    int row = startPos.second - 1;
+    Piece* piece = board[startPos.second - 1][startPos.first[0] - 'a'].piece;
+    //down
+    row--;
+    while(row >= 0) {
+        cout<< "Checking vertical down at " << string(1, col + 'a') << row + 1 <<"for " << piece->abrvName << endl;
+        if(board[row][col].isEmpty) {
+            possibleMoves.push_back(make_pair(string(1, col + 'a'), row + 1));
+        } else {
+            if(board[row][col].piece->isWhite != piece->isWhite) {
+                possibleMoves.push_back(make_pair(string(1, col + 'a'), row + 1));
+            }
+            break;
+        }
+        row--;
+    }
+    row = startPos.second - 1;
+    row++;
+    //up
+    while(row < 8) {
+        cout<< "Checking vertical up at " << string(1, col + 'a') << row + 1 <<"for " << piece->abrvName << endl;
+        if(board[row][col].isEmpty) {
+            cout << "Adding vertical up move " << string(1, col + 'a') << row + 1 <<"for " << piece->abrvName << endl;
+            possibleMoves.push_back(make_pair(string(1, col + 'a'), row + 1));
+        } else {
+             cout << "Encountered piece " << board[row][col].piece->abrvName << " at " << string(1, col + 'a') << row + 1 <<" for " << piece->abrvName << endl;
+            if(board[row][col].piece->isWhite != piece->isWhite) {
+                    cout << "Adding vertical up capture move " << string(1, col + 'a') << row + 1 <<" for " << piece->abrvName << endl;
+                possibleMoves.push_back(make_pair(string(1, col + 'a'), row + 1));
+            }
+            break;
+        }
+        row++;
+    }
+    return possibleMoves;
+}
+vector<pair<string, int>> movement::knightMove(const pair<string, int>& startPos, const vector<vector<Boardcell>>& board) {
+    vector<pair<string, int>> possibleMoves;
+    int col = startPos.first[0] - 'a';
+    int row = startPos.second - 1;
+    Piece* piece = board[startPos.second - 1][startPos.first[0] - 'a'].piece;
+    vector<pair<int, int>> knightMoves = {{-2, -1}, {-2, 1}, {-1, -2}, {-1, 2}, {1, -2}, {1, 2}, {2, -1}, {2, 1}};
+    for(auto& move : knightMoves) {
+        int newRow = row + move.first;
+        int newCol = col + move.second;
+        if(newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
+            if(board[newRow][newCol].isEmpty || board[newRow][newCol].piece->isWhite != piece->isWhite) {
+                possibleMoves.push_back(make_pair(string(1, newCol + 'a'), newRow + 1));
+            }
+        }
+    }
+    return possibleMoves;
+}

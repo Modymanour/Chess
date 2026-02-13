@@ -12,7 +12,7 @@ void Pawn::updatePossibleMoves(const std::vector<std::vector<Boardcell>>& board)
     string col = position.first;
     int row = position.second - 1;
     int direction = isWhite ? 1 : -1; //white moves up, black moves down
-    cout << "Updating possible moves for " << abrvName << " at " << position.first << position.second << " direction:"<<direction << " "<<this->isWhite<< endl;
+    // cout << "Updating possible moves for " << abrvName << " at " << position.first << position.second << " direction:"<<direction << " "<<this->isWhite<< endl;
 
     //check if the cell in front of the pawn is empty, if it is add it to possible moves
     if(board[row + direction][col[0]-'a'].isEmpty) {

@@ -49,20 +49,6 @@ void Manager::displayPiecePossibleMoves(pair<string, int> position) {
 void Manager::displayPieces() {
     board->displayPieces();
 }
-void Manager::startGame() {
-    while (!isGameOver) {
-        board->displayBoard();
-        if (isWhiteTurn) {
-            cout << "White's turn" << endl;
-        } else {
-            cout << "Black's turn" << endl;
-        }
-        string startPos, endPos;
-        cout << "Enter move (e.g., e2 e4): ";
-        cin >> startPos >> endPos;
-        makeMove({startPos.substr(0, 1), stoi(startPos.substr(1))}, {endPos.substr(0, 1), stoi(endPos.substr(1))});
-    }
-}
 void Manager::switchTurn() {
     isWhiteTurn = !isWhiteTurn;
     board->isWhiteTurn = isWhiteTurn;
@@ -76,11 +62,74 @@ void Manager::makeMove(std::pair<std::string, int> startPos, std::pair<std::stri
     }
 }
 void Manager::saveGame() {
-
+    
 }
 void Manager::loadGame() {
-
+    
 }
 void Manager::endGame() {
     isGameOver = true;
+}
+void Manager::startGame() {
+    string startPos, endPos, pos;
+    int choice;
+    while (!isGameOver) {
+        board->displayBoard();
+        if (isWhiteTurn) {
+            cout << "White's turn" << endl;
+        } else {
+            cout << "Black's turn" << endl;
+        }
+        cout << "1. Make a move" << endl;
+        cout << "2. Display possible moves for a piece" << endl;
+        cout << "3. Save game" << endl;
+        cout << "4. Load game" << endl;
+        cout << "5. Quit game" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+        
+        if (cin.fail()) {
+            cin.clear();
+            cin.ignore(10000, '\n');
+            cout << "Invalid input. Try again." << endl;
+            continue;
+        }
+
+        switch (choice) {
+            case 1:
+                cout << "Enter move (e.g., e2 e4): ";
+                cin >> startPos >> endPos;
+                if (cin.fail() || startPos.length() < 2 || endPos.length() < 2) {
+                    cin.clear();
+                    cin.ignore(10000, '\n');
+                    cout << "Invalid input format. Try again." << endl;
+                } else {
+                    makeMove({startPos.substr(0, 1), stoi(startPos.substr(1))}, {endPos.substr(0, 1), stoi(endPos.substr(1))});
+                }
+                break;
+            case 2: {
+                cout << "Enter piece position (e.g., e2): ";
+                cin >> pos;
+                if (cin.fail() || pos.length() < 2) {
+                    cin.clear();
+                    cin.ignore(10000, '\n');
+                    cout << "Invalid input format. Try again." << endl;
+                } else {
+                    displayPiecePossibleMoves({pos.substr(0, 1), stoi(pos.substr(1))});
+                }
+                break;
+            }
+            case 3:
+                saveGame();
+                break;
+            case 4:
+                loadGame();
+                break;
+            case 5:
+                endGame();
+                break;
+            default:
+                cout << "Invalid choice. Try again." << endl;
+        }
+    }
 }
