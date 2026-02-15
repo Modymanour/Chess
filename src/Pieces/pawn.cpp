@@ -7,7 +7,7 @@ Pawn::Pawn(bool isWhite, pair<string, int> position) : Piece(isWhite, position) 
     val = 1;
 }
 
-void Pawn::updatePossibleMoves(const std::vector<std::vector<Boardcell>>& board) {
+void Pawn::updatePossibleMoves(std::vector<std::vector<Boardcell>>& board) { // needs optimiztion
     possibleMoves.clear();
     string col = position.first;
     int row = position.second - 1;
@@ -27,11 +27,19 @@ void Pawn::updatePossibleMoves(const std::vector<std::vector<Boardcell>>& board)
     
     
     //check if the diagonal cells have an opponent piece to capture
-    if(position.first != "a" && !board[row + direction][col[0]-'a'-1].isEmpty && board[row + direction][col[0]-'a'-1].piece->isWhite != isWhite) {
+    if(col != "a" && !board[row + direction][col[0]-'a'-1].isEmpty && board[row + direction][col[0]-'a'-1].piece->isWhite != isWhite) {
         possibleMoves.push_back(make_pair(string(1, col[0]-1), row + direction+1));
     }
-    if(position.first != "h" && !board[row + direction][col[0]-'a'+1].isEmpty && board[row + direction][col[0]-'a'+1].piece->isWhite != isWhite) {
+    if(col != "h" && !board[row + direction][col[0]-'a'+1].isEmpty && board[row + direction][col[0]-'a'+1].piece->isWhite != isWhite) {
         possibleMoves.push_back(make_pair(string(1, col[0]+1), row + direction+1));
+    }
+    if(col != "a" && col != "h" && row + direction >= 0 && row + direction < 8) {
+        if(board[row + direction][col[0]-'a'-1].isEmpty || board[row + direction][col[0]-'a'-1].piece->isWhite != isWhite) {
+            board[row + direction][col[0]-'a'-1].threatenedBy.push_back(this);
+        }
+        if(board[row + direction][col[0]-'a'+1].isEmpty || board[row + direction][col[0]-'a'+1].piece->isWhite != isWhite) {
+            board[row + direction][col[0]-'a'+1].threatenedBy.push_back(this);
+        }
     }
 }
 

@@ -7,7 +7,7 @@ class Rook : public Piece {
 public:
     Rook(bool isWhite, std::pair<std::string, int> position);
     bool isValidMove(const std::pair<std::string, int>& startPos, const std::pair<std::string, int>& endPos) override;
-    void updatePossibleMoves(const std::vector<std::vector<Boardcell>>& board) override;
+    void updatePossibleMoves(std::vector<std::vector<Boardcell>>& board) override;
     bool move(const std::pair<std::string, int>& startPos, const std::pair<std::string, int>& endPos,std::vector<std::vector<Boardcell>>& board) override;
     ~Rook() = default;
 };

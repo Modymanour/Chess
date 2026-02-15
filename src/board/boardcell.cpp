@@ -12,3 +12,11 @@ void Boardcell::removePiece() {
     this->piece = nullptr;
     this->isEmpty = true;
 }
+bool Boardcell::isThreatenedByOpponent(bool isWhite) {
+    for(auto& piece : threatenedBy) {
+        if(piece->isWhite != isWhite) {
+            return true;
+        }
+    }
+    return false;
+}

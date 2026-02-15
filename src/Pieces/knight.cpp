@@ -9,7 +9,7 @@ Knight::Knight(bool isWhite, pair<string, int> position) : Piece(isWhite, positi
 bool Knight::isValidMove(const pair<string, int>& startPos, const pair<string, int>& endPos) {
     return find(possibleMoves.begin(), possibleMoves.end(), endPos) != possibleMoves.end();
 }
-void Knight::updatePossibleMoves(const vector<vector<Boardcell>>& board) {
+void Knight::updatePossibleMoves(vector<vector<Boardcell>>& board) {
     possibleMoves.clear();
     vector<pair<string, int>> knightMoves = movement::knightMove(position, board);
     possibleMoves.insert(possibleMoves.end(), knightMoves.begin(), knightMoves.end());

@@ -10,7 +10,7 @@ Rook::Rook(bool isWhite, pair<string, int> position) : Piece(isWhite, position) 
 bool Rook::isValidMove(const pair<string, int>& startPos, const pair<string, int>& endPos) {
    return find(possibleMoves.begin(), possibleMoves.end(), endPos) != possibleMoves.end();
 }
-void Rook::updatePossibleMoves(const vector<vector<Boardcell>>& board) {
+void Rook::updatePossibleMoves(vector<vector<Boardcell>>& board) {
     possibleMoves.clear();
     vector<pair<string, int>> horizontalMoves = movement::horizontalMove(position, board);
     vector<pair<string, int>> verticalMoves = movement::verticalMove(position, board);

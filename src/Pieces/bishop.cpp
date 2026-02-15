@@ -8,7 +8,7 @@ Bishop::Bishop(bool isWhite, pair<string, int> position) : Piece(isWhite, positi
 bool Bishop::isValidMove(const pair<string, int>& startPos, const pair<string, int>& endPos) {
     return find(possibleMoves.begin(), possibleMoves.end(), endPos) != possibleMoves.end();
 }
-void Bishop::updatePossibleMoves(const vector<vector<Boardcell>>& board) {
+void Bishop::updatePossibleMoves( vector<vector<Boardcell>>& board) {
     possibleMoves.clear();
     vector<pair<string, int>> diagonalMoves = movement::diagonalMove(position, board);
     possibleMoves.insert(possibleMoves.end(), diagonalMoves.begin(), diagonalMoves.end());
