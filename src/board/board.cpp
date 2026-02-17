@@ -108,3 +108,236 @@ bool Board::movePiece(pair<std::string, int> startPos, pair<std::string, int> en
 
 Board::~Board() {
 }
+
+// Find the king of a given color on the board
+Piece* Board::findKing(bool isWhite, const vector<vector<Boardcell>>& board) {
+    for(const auto& row : board) {
+        for(const auto& cell : row) {
+            if(!cell.isEmpty && cell.piece->isWhite == isWhite && cell.piece->name == "King") {
+                return cell.piece;
+            }
+        }
+    }
+    return nullptr;
+}
+
+// Check if the king is in check
+bool Board::isKingInCheck(bool isWhiteKing, const vector<vector<Boardcell>>& board) {
+    Piece* king = findKing(isWhiteKing, board);
+    if(king == nullptr) return false;
+    
+    int kingCol = king->position.first[0] - 'a';
+    int kingRow = king->position.second - 1;
+    
+    // Check all opponent pieces to see if they attack the king
+    for(const auto& row : board) {
+        for(const auto& cell : row) {
+            if(!cell.isEmpty && cell.piece->isWhite != isWhiteKing) {
+                // Check if this opponent piece can attack the king's position
+                for(const auto& move : cell.piece->possibleMoves) {
+                    if(move == king->position) {
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+    return false;
+}
+
+// Detect if a specific piece is pinned
+bool Board::isPiecePinned(Piece* piece, const vector<vector<Boardcell>>& board) {
+    if(piece == nullptr || piece->name == "King") return false;
+    
+    Piece* king = findKing(piece->isWhite, board);
+    if(king == nullptr) return false;
+    
+    int pieceCol = piece->position.first[0] - 'a';
+    int pieceRow = piece->position.second - 1;
+    int kingCol = king->position.first[0] - 'a';
+    int kingRow = king->position.second - 1;
+    
+    // Determine the direction from piece to king
+    int colDiff = 0, rowDiff = 0;
+    
+    if(kingCol == pieceCol) {
+        colDiff = 0;
+        rowDiff = (kingRow > pieceRow) ? 1 : -1;
+    } else if(kingRow == pieceRow) {
+        colDiff = (kingCol > pieceCol) ? 1 : -1;
+        rowDiff = 0;
+    } else if(abs(kingCol - pieceCol) == abs(kingRow - pieceRow)) {
+        colDiff = (kingCol > pieceCol) ? 1 : -1;
+        rowDiff = (kingRow > pieceRow) ? 1 : -1;
+    } else {
+        return false; // Piece and king are not aligned
+    }
+    
+    // Look beyond the piece towards the king
+    int checkCol = pieceCol + colDiff;
+    int checkRow = pieceRow + rowDiff;
+    
+    while(checkCol != kingCol || checkRow != kingRow) {
+        if(board[checkRow][checkCol].piece != nullptr) {
+            return false; // Blocked by another piece
+        }
+        checkCol += colDiff;
+        checkRow += rowDiff;
+    }
+    
+    // Look in the opposite direction from the piece (away from king)
+    checkCol = pieceCol - colDiff;
+    checkRow = pieceRow - rowDiff;
+    
+    while(checkCol >= 0 && checkCol < 8 && checkRow >= 0 && checkRow < 8) {
+        Piece* p = board[checkRow][checkCol].piece;
+        if(p != nullptr) {
+            // Found a piece - check if it's an attacking piece
+            if(p->isWhite != piece->isWhite) {
+                // Check if this piece can attack along this line
+                string pName = p->name;
+                bool canAttackOnLine = false;
+                
+                if(colDiff == 0 && rowDiff != 0) {
+                    // Vertical line - rook or queen
+                    canAttackOnLine = (pName == "Rook" || pName == "Queen");
+                } else if(colDiff != 0 && rowDiff == 0) {
+                    // Horizontal line - rook or queen
+                    canAttackOnLine = (pName == "Rook" || pName == "Queen");
+                } else if(abs(colDiff) == 1 && abs(rowDiff) == 1) {
+                    // Diagonal line - bishop or queen
+                    canAttackOnLine = (pName == "Bishop" || pName == "Queen");
+                    
+                    // Special case for pawns on diagonals
+                    if(pName == "Pawn") {
+                        // Check pawn attack direction
+                        int pawnDirection = p->isWhite ? 1 : -1;
+                        if(rowDiff == pawnDirection && abs(colDiff) == 1) {
+                            canAttackOnLine = true;
+                        }
+                    }
+                }
+                
+                if(canAttackOnLine) {
+                    return true; // Found attacking piece - piece is pinned
+                }
+            }
+            break; // No more pieces in this direction
+        }
+        checkCol -= colDiff;
+        checkRow -= rowDiff;
+    }
+    
+    return false; // Not pinned
+}
+
+// Get the pin direction (useful for restricting pinned piece movement)
+pair<string, int> Board::getPinDirection(Piece* piece, const vector<vector<Boardcell>>& board) {
+    if(piece == nullptr || piece->name == "King" || !isPiecePinned(piece, board)) {
+        return make_pair("none", 0);
+    }
+    
+    Piece* king = findKing(piece->isWhite, board);
+    int pieceCol = piece->position.first[0] - 'a';
+    int pieceRow = piece->position.second - 1;
+    int kingCol = king->position.first[0] - 'a';
+    int kingRow = king->position.second - 1;
+    
+    if(kingCol == pieceCol && kingRow != pieceRow) {
+        return make_pair("vertical", kingRow > pieceRow ? 1 : -1);
+    } else if(kingRow == pieceRow && kingCol != pieceCol) {
+        return make_pair("horizontal", kingCol > pieceCol ? 1 : -1);
+    } else if(abs(kingCol - pieceCol) == abs(kingRow - pieceRow)) {
+        int colDir = kingCol > pieceCol ? 1 : -1;
+        int rowDir = kingRow > pieceRow ? 1 : -1;
+        return make_pair("diagonal", (colDir * 10 + rowDir));
+    }
+    
+    return make_pair("unknown", 0);
+}
+
+// Filter moves for a pinned piece
+vector<pair<string, int>> Board::filterMovesForPin(Piece* piece, const vector<pair<string, int>>& moves, const vector<vector<Boardcell>>& board) {
+    vector<pair<string, int>> filteredMoves;
+    
+    if(!isPiecePinned(piece, board)) {
+        return moves; // Not pinned, all moves are valid
+    }
+    
+    Piece* king = findKing(piece->isWhite, board);
+    int kingCol = king->position.first[0] - 'a';
+    int kingRow = king->position.second - 1;
+    int pieceCol = piece->position.first[0] - 'a';
+    int pieceRow = piece->position.second - 1;
+    
+    // Determine pin direction
+    int colDiff = 0, rowDiff = 0;
+    if(kingCol == pieceCol) {
+        rowDiff = (kingRow > pieceRow) ? 1 : -1;
+    } else if(kingRow == pieceRow) {
+        colDiff = (kingCol > pieceCol) ? 1 : -1;
+    } else {
+        colDiff = (kingCol > pieceCol) ? 1 : -1;
+        rowDiff = (kingRow > pieceRow) ? 1 : -1;
+    }
+    
+    // Only allow moves along the pin line
+    for(const auto& move : moves) {
+        int moveCol = move.first[0] - 'a';
+        int moveRow = move.second - 1;
+        
+        // Check if move is along the pin line (towards or away from king)
+        int moveColDiff = 0, moveRowDiff = 0;
+        
+        if(moveCol == pieceCol && moveRow != pieceRow) {
+            moveRowDiff = (moveRow > pieceRow) ? 1 : -1;
+        } else if(moveRow == pieceRow && moveCol != pieceCol) {
+            moveColDiff = (moveCol > pieceCol) ? 1 : -1;
+        } else if(moveCol != pieceCol && moveRow != pieceRow && 
+                  abs(moveCol - pieceCol) == abs(moveRow - pieceRow)) {
+            moveColDiff = (moveCol > pieceCol) ? 1 : -1;
+            moveRowDiff = (moveRow > pieceRow) ? 1 : -1;
+        }
+        
+        // Valid move if it's along the pin line or on the king line
+        if((moveColDiff == colDiff && moveRowDiff == rowDiff) ||
+           (moveColDiff == -colDiff && moveRowDiff == -rowDiff) ||
+           (moveCol == kingCol && moveRow == kingRow && colDiff == 0 && rowDiff != 0) ||
+           (moveCol == kingCol && kingRow == pieceRow && moveRow == kingRow && colDiff != 0)) {
+            filteredMoves.push_back(move);
+        }
+    }
+    
+    return filteredMoves;
+}
+
+// Check if a move would expose the king to check. this is one of the implementations of checking whether a piece is pinned or not, yet i decided on the other implementation
+// beacuse it also shows the moves of the pinned piece that are valid to move
+
+bool Board::wouldMoveExposeKing(Piece* piece, const pair<string, int>& movePos, const vector<vector<Boardcell>>& board) {
+    if(piece == nullptr) return true;
+    
+    // Create a temporary board state
+    vector<vector<Boardcell>> tempBoard = board;
+    
+    // Make the move
+    int startCol = piece->position.first[0] - 'a';
+    int startRow = piece->position.second - 1;
+    int endCol = movePos.first[0] - 'a';
+    int endRow = movePos.second - 1;
+    
+    tempBoard[endRow][endCol].assignPiece(piece);
+    tempBoard[startRow][startCol].removePiece();
+    
+    // Update piece's temporary position
+    auto originalPos = piece->position;
+    piece->position = movePos;
+    
+    // Check if king is in check after the move
+    bool kingInCheck = isKingInCheck(piece->isWhite, tempBoard);
+    
+    // Restore original position
+    piece->position = originalPos;
+    
+    return kingInCheck;
+}
