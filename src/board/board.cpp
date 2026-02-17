@@ -44,6 +44,9 @@ void Board::displayBoard() {
             }
             cout << setw(3) << i+1 <<  endl;
         }
+        if(isKingInCheck(isWhiteTurn, boardCells)) {
+            cout << "White King is in Check!" << endl;
+        }
     }
     else{
         //black's prespective
@@ -60,6 +63,9 @@ void Board::displayBoard() {
                 }
             }
             cout << setw(3) << i+1 <<  endl;
+        }
+        if(isKingInCheck(false, boardCells)) {
+            cout << "Black King is in Check!" << endl;
         }
     }
     
@@ -80,11 +86,22 @@ void Board::displayPieces(){
 void Board::updateBoard() {
 }
 
-void Board::updatePossibleMoves() {
+void Board::updatePossibleMoves() {//can be optmized by adding pieces to board to upgrade immiedietly
+    bool kingInCheck = isKingInCheck(isWhiteTurn, boardCells);
+    vector<pair<string, int>> checkPath;
+    if (kingInCheck) {
+        checkPath = kingCheckPath(boardCells);
+        for(auto& cell : checkPath) {
+            cout << "Check path includes: " << cell.first << cell.second << endl;
+        }
+    }
     for(auto& row : boardCells) {
         for(auto& cell : row) {
             if(!cell.isEmpty) {
                 cell.piece->updatePossibleMoves(boardCells);
+                if(kingInCheck && cell.piece->name != "King") {
+                    cell.piece->possibleMoves = filterMovesForCheck(cell.piece, checkPath, boardCells);
+                }
                 if(isPiecePinned(cell.piece, boardCells)) {
                     cell.piece->possibleMoves = filterMovesForPin(cell.piece, cell.piece->possibleMoves, boardCells);
                 }
@@ -311,6 +328,62 @@ vector<pair<string, int>> Board::filterMovesForPin(Piece* piece, const vector<pa
         }
     }
     
+    return filteredMoves;
+}
+
+vector<pair<string, int>> Board::kingCheckPath(const vector<vector<Boardcell>>& board) {
+    vector<pair<string, int>> checkPath;
+    Piece* king = findKing(isWhiteTurn, board);
+    if(king == nullptr) return checkPath;
+    int kingCol = king->position.first[0] - 'a';
+    int kingRow = king->position.second - 1;
+    int attackingPieceCol,attackingPieceRow;
+
+    for(auto& row:board)
+        for(auto& cell:row)
+            if(!cell.isEmpty && cell.piece->isWhite != isWhiteTurn)
+                for(auto& move: cell.piece->possibleMoves)
+                    if(move == king->position){
+                        attackingPieceCol = cell.piece->position.first[0] - 'a';
+                        attackingPieceRow = cell.piece->position.second - 1;
+
+                        // Compute deltas from attacker to king
+                        int differenceCol = kingCol - attackingPieceCol;
+                        int differenceRow = kingRow - attackingPieceRow;
+
+                        // Always include the attacker's square first
+                        checkPath.push_back({ string(1, char('a' + attackingPieceCol)), attackingPieceRow + 1 });
+
+                        
+                        if (cell.piece->name == "Knight" || cell.piece->name == "Pawn") {
+                            return checkPath;
+                        }
+
+                        // Compute step direction (sign of delta)
+                        int colDirection = (differenceCol == 0) ? 0 : (differenceCol > 0 ? 1 : -1);
+                        int rowDirection = (differenceRow == 0) ? 0 : (differenceRow > 0 ? 1 : -1);
+
+                        int currentCol = attackingPieceCol + colDirection;
+                        int currentRow = attackingPieceRow + rowDirection;
+
+                        while(currentCol != kingCol && currentRow != kingRow) {
+                            checkPath.push_back({ string(1, char('a' + currentCol)), currentRow + 1 });
+                            currentCol += colDirection;
+                            currentRow += rowDirection;
+                        }
+
+                        return checkPath;
+                    }
+    
+    return checkPath; // No checking piece found
+}
+vector<pair<string, int>> Board::filterMovesForCheck(Piece* piece, const vector<pair<string, int>>& validMoves, const vector<vector<Boardcell>>& board) {
+    vector<pair<string, int>> filteredMoves;
+    for(auto& move : validMoves){
+        if(find(piece->possibleMoves.begin(), piece->possibleMoves.end(), move) != piece->possibleMoves.end()){
+            filteredMoves.push_back(move);
+        }
+    }
     return filteredMoves;
 }
 

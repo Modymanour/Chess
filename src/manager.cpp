@@ -26,6 +26,13 @@ void Manager::initializeGame() {
     
     whitePieces->initializePieces(board);
     blackPieces->initializePieces(board);
+    for(auto& row : board->boardCells) {
+        for(auto& cell : row) {
+            if(!cell.isEmpty) {
+                board->pieces.push_back(cell.piece);
+            }
+        }
+    }
     board->updatePossibleMoves();
 }
 void Manager::displayBoard() {
