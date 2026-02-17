@@ -4,6 +4,7 @@ using namespace std;
 Piece::Piece(bool isWhite, pair<string, int> position){
     this->isWhite = isWhite;
     this->position = position;
+    this->hasMoved = false;
     this->isPinned = false;
     this->pinDirection = make_pair("none", 0);
 }

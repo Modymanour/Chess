@@ -85,6 +85,9 @@ void Board::updatePossibleMoves() {
         for(auto& cell : row) {
             if(!cell.isEmpty) {
                 cell.piece->updatePossibleMoves(boardCells);
+                if(isPiecePinned(cell.piece, boardCells)) {
+                    cell.piece->possibleMoves = filterMovesForPin(cell.piece, cell.piece->possibleMoves, boardCells);
+                }
             }
         }
     }

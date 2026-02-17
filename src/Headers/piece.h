@@ -10,7 +10,7 @@ public:
     int val;
     std::string name;
     std::string abrvName;
-    bool isWhite;
+    bool isWhite, hasMoved;
     std::pair<std::string, int> position;
     std::vector<std::pair<std::string, int>> possibleMoves;
     // Pin-related fields

@@ -2,8 +2,8 @@
 #include <bits/stdc++.h>
 #include <utility>
 #include "piece.h"
+#include "piecesMovement.h"
 class Pawn : public Piece {
-    bool hasMoved = false;
 public:
     Pawn(bool isWhite, std::pair<std::string, int> position);
     bool isValidMove(const std::pair<std::string, int>& startPos, const std::pair<std::string, int>& endPos) override;

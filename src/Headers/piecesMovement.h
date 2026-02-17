@@ -14,4 +14,6 @@ public:
           vector<vector<Boardcell>>& board);
      static vector<pair<string, int>> kingMove(const std::pair<std::string, int>& startPos,
           vector<vector<Boardcell>>& board);
+    static vector<pair<string, int>> pawnMove(const std::pair<std::string, int>& startPos,
+          vector<vector<Boardcell>>& board);
 };
