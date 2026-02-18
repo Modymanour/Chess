@@ -5,6 +5,7 @@ vector<pair<string, int>> movement::diagonalMove(const pair<string, int>& startP
     int col = startPos.first[0] - 'a';
     int row = startPos.second - 1;
     Piece* piece = board[startPos.second - 1][startPos.first[0] - 'a'].piece;
+    if(piece == nullptr) return possibleMoves;
     //down left
     col--;
     row--;
@@ -81,10 +82,11 @@ vector<pair<string, int>> movement::horizontalMove(const pair<string, int>& star
     int col = startPos.first[0] - 'a';
     int row = startPos.second - 1;
     Piece* piece = board[startPos.second - 1][startPos.first[0] - 'a'].piece;
+    if(piece == nullptr) return possibleMoves;
     //left
     col--;
     while(col >= 0) {
-        // cout<< "Checking horizontal left at " << string(1, col + 'a') << row + 1 <<"for " << piece->abrvName << endl;
+        cout<< "Checking horizontal left at " << string(1, col + 'a') << row + 1 <<"for " << piece->abrvName << endl;
         if(board[row][col].isEmpty) {
             possibleMoves.push_back(make_pair(string(1, col + 'a'), row + 1));
             board[row][col].threatenedBy.push_back(piece);
@@ -121,6 +123,7 @@ vector<pair<string, int>> movement::verticalMove(const pair<string, int>& startP
     int col = startPos.first[0] - 'a';
     int row = startPos.second - 1;
     Piece* piece = board[startPos.second - 1][startPos.first[0] - 'a'].piece;
+    if(piece == nullptr) return possibleMoves;
     //down
     row--;
     while(row >= 0) {
@@ -164,6 +167,7 @@ vector<pair<string, int>> movement::knightMove(const pair<string, int>& startPos
     int col = startPos.first[0] - 'a';
     int row = startPos.second - 1;
     Piece* piece = board[startPos.second - 1][startPos.first[0] - 'a'].piece;
+    if(piece == nullptr) return possibleMoves;
     vector<pair<int, int>> knightMoves = {{-2, -1}, {-2, 1}, {-1, -2}, {-1, 2}, {1, -2}, {1, 2}, {2, -1}, {2, 1}};
     for(auto& move : knightMoves) {
         int newRow = row + move.first;
@@ -182,6 +186,7 @@ vector<pair<string, int>> movement::kingMove(const pair<string, int>& startPos, 
     int col = startPos.first[0] - 'a';
     int row = startPos.second - 1;
     Piece* piece = board[startPos.second - 1][startPos.first[0] - 'a'].piece;
+    if(piece == nullptr) return possibleMoves;
     vector<pair<int, int>> kingMoves = {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
     for(auto& move : kingMoves) {
         int newRow = row + move.first;

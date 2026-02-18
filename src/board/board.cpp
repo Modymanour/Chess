@@ -87,6 +87,19 @@ void Board::updateBoard() {
 }
 
 void Board::updatePossibleMoves() {//can be optmized by adding pieces to board to upgrade immiedietly
+    
+    for(auto& piece : pieces) {
+        if(piece == nullptr) continue;
+        piece->updatePossibleMoves(boardCells);
+        cout << "Updated possible moves for " << piece->abrvName << " at " << piece->position.first << piece->position.second << ": ";
+        if(isPiecePinned(piece, boardCells)) {
+            piece->possibleMoves = filterMovesForPin(piece, piece->possibleMoves, boardCells);
+        }
+        for(auto& move : piece->possibleMoves) {
+            cout << move.first << move.second << " ";
+        }
+        cout << endl;
+    }
     bool kingInCheck = isKingInCheck(isWhiteTurn, boardCells);
     vector<pair<string, int>> checkPath;
     if (kingInCheck) {
@@ -94,20 +107,18 @@ void Board::updatePossibleMoves() {//can be optmized by adding pieces to board t
         for(auto& cell : checkPath) {
             cout << "Check path includes: " << cell.first << cell.second << endl;
         }
-    }
-    for(auto& row : boardCells) {
-        for(auto& cell : row) {
-            if(!cell.isEmpty) {
-                cell.piece->updatePossibleMoves(boardCells);
-                if(kingInCheck && cell.piece->name != "King") {
-                    cell.piece->possibleMoves = filterMovesForCheck(cell.piece, checkPath, boardCells);
+        for(auto& piece : pieces) {
+            if(piece->name != "King" && piece->isWhite == isWhiteTurn) {
+                piece->possibleMoves = filterMovesForCheck(piece, checkPath, boardCells);
+                cout << "filtered : " << piece->abrvName << " at " << piece->position.first << piece->position.second << " Possible Moves: ";
+                for(auto& move : piece->possibleMoves) {
+                    cout << move.first << move.second << " ";
                 }
-                if(isPiecePinned(cell.piece, boardCells)) {
-                    cell.piece->possibleMoves = filterMovesForPin(cell.piece, cell.piece->possibleMoves, boardCells);
-                }
+                cout << endl;
             }
         }
     }
+    
 }
 
 bool Board::movePiece(pair<std::string, int> startPos, pair<std::string, int> endPos) {
@@ -366,7 +377,7 @@ vector<pair<string, int>> Board::kingCheckPath(const vector<vector<Boardcell>>& 
                         int currentCol = attackingPieceCol + colDirection;
                         int currentRow = attackingPieceRow + rowDirection;
 
-                        while(currentCol != kingCol && currentRow != kingRow) {
+                        while(currentCol != kingCol || currentRow != kingRow) {
                             checkPath.push_back({ string(1, char('a' + currentCol)), currentRow + 1 });
                             currentCol += colDirection;
                             currentRow += rowDirection;
@@ -379,8 +390,10 @@ vector<pair<string, int>> Board::kingCheckPath(const vector<vector<Boardcell>>& 
 }
 vector<pair<string, int>> Board::filterMovesForCheck(Piece* piece, const vector<pair<string, int>>& validMoves, const vector<vector<Boardcell>>& board) {
     vector<pair<string, int>> filteredMoves;
-    for(auto& move : validMoves){
-        if(find(piece->possibleMoves.begin(), piece->possibleMoves.end(), move) != piece->possibleMoves.end()){
+    for(auto& move : piece->possibleMoves) {
+        cout<<"cur move to be checked : " << move.first << move.second << endl;
+        if(find(validMoves.begin(),validMoves.end(), move) != validMoves.end()) {
+            cout<<"move found" << endl;
             filteredMoves.push_back(move);
         }
     }
