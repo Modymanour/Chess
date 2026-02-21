@@ -8,7 +8,6 @@ BlackPieces::BlackPieces(){
 }
 
 void BlackPieces::initializePieces(Board* board){
-        this->board = board;
         // Initialize pawns
         for(int i = 0; i < 8; i++){
             pieces.push_back(new Pawn(false, board->boardCells[6][i].position));

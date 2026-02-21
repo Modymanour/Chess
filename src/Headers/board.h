@@ -20,8 +20,10 @@ public:
     bool isWhiteTurn;
     std::vector<std::vector<Boardcell>> boardCells;
     std::vector<Piece*> pieces;
+    std::vector<Piece*> deadPieces;
     WhitePieces* whitePieces;
     BlackPieces* blackPieces;
+    bool isCheck,isGameOver;
     static Board* getInstance();
     void initializeBoard();
     void displayBoard();
@@ -29,8 +31,8 @@ public:
     void updateBoard();
     void updatePossibleMoves();
     bool movePiece(std::pair<std::string, int> startPos, std::pair<std::string, int> endPos);
-    
-    // Pin detection and validation methods
+    void killPiece(Piece* piece);
+    void viewDeadPieces();
     bool isKingInCheck(bool isWhiteKing, const std::vector<std::vector<Boardcell>>& board);
     bool isPiecePinned(Piece* piece, const std::vector<std::vector<Boardcell>>& board);
     std::pair<std::string, int> getPinDirection(Piece* piece, const std::vector<std::vector<Boardcell>>& board);
@@ -40,6 +42,7 @@ public:
     std::vector<std::pair<std::string, int>> filterMovesForCheck(Piece* piece, const std::vector<std::pair<std::string, int>>& moves, const std::vector<std::vector<Boardcell>>& board);
     bool wouldMoveExposeKing(Piece* piece, const std::pair<std::string, int>& movePos, const std::vector<std::vector<Boardcell>>& board);
     bool isCheckmate(bool isWhiteKing, const std::vector<std::vector<Boardcell>>& board);
+    void resetEverything();
     
     ~Board();
 };

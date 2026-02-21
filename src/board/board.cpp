@@ -6,6 +6,8 @@ using namespace std;
 Board* Board::instance = nullptr;
 Board::Board() {
     isWhiteTurn = true;
+    whitePieces = nullptr;
+    blackPieces = nullptr;
 }
 Board* Board::getInstance() {
     if (instance == nullptr) {
@@ -25,6 +27,18 @@ void Board::initializeBoard() {
         }
         boardCells.push_back(row);
     }
+    if(whitePieces == nullptr) whitePieces = new WhitePieces();
+    if(blackPieces == nullptr) blackPieces = new BlackPieces();
+    whitePieces->initializePieces(this);
+    blackPieces->initializePieces(this);
+    for(auto& row : boardCells) {
+        for(auto& cell : row) {
+            if(!cell.isEmpty) {
+                pieces.push_back(cell.piece);
+            }
+        }
+    }
+    updatePossibleMoves();
 }
 
 void Board::displayBoard() {
@@ -44,7 +58,7 @@ void Board::displayBoard() {
             }
             cout << setw(3) << i+1 <<  endl;
         }
-        if(isKingInCheck(isWhiteTurn, boardCells)) {
+        if(isCheck) {
             cout << "White King is in Check!" << endl;
         }
     }
@@ -64,7 +78,7 @@ void Board::displayBoard() {
             }
             cout << setw(3) << i+1 <<  endl;
         }
-        if(isKingInCheck(false, boardCells)) {
+        if(isCheck) {
             cout << "Black King is in Check!" << endl;
         }
     }
@@ -84,14 +98,16 @@ void Board::displayPieces(){
     }
 }
 void Board::updateBoard() {
+    isWhiteTurn = !isWhiteTurn;
+    updatePossibleMoves();
+    if(isCheck) isGameOver = isCheckmate(isWhiteTurn,boardCells);
 }
 
 void Board::updatePossibleMoves() {//can be optmized by adding pieces to board to upgrade immiedietly
-    
     for(auto& piece : pieces) {
         if(piece == nullptr) continue;
         piece->updatePossibleMoves(boardCells);
-        cout << "Updated possible moves for " << piece->abrvName << " at " << piece->position.first << piece->position.second << ": ";
+        // cout << "Updated possible moves for " << piece->abrvName << " at " << piece->position.first << piece->position.second << ": ";
         if(isPiecePinned(piece, boardCells)) {
             piece->possibleMoves = filterMovesForPin(piece, piece->possibleMoves, boardCells);
         }
@@ -100,21 +116,21 @@ void Board::updatePossibleMoves() {//can be optmized by adding pieces to board t
         }
         cout << endl;
     }
-    bool kingInCheck = isKingInCheck(isWhiteTurn, boardCells);
+    isCheck = isKingInCheck(isWhiteTurn, boardCells);
     vector<pair<string, int>> checkPath;
-    if (kingInCheck) {
+    if (isCheck) {
         checkPath = kingCheckPath(boardCells);
         for(auto& cell : checkPath) {
-            cout << "Check path includes: " << cell.first << cell.second << endl;
+            // cout << "Check path includes: " << cell.first << cell.second << endl;
         }
         for(auto& piece : pieces) {
             if(piece->name != "King" && piece->isWhite == isWhiteTurn) {
                 piece->possibleMoves = filterMovesForCheck(piece, checkPath, boardCells);
-                cout << "filtered : " << piece->abrvName << " at " << piece->position.first << piece->position.second << " Possible Moves: ";
-                for(auto& move : piece->possibleMoves) {
-                    cout << move.first << move.second << " ";
-                }
-                cout << endl;
+                // cout << "filtered : " << piece->abrvName << " at " << piece->position.first << piece->position.second << " Possible Moves: ";
+                // for(auto& move : piece->possibleMoves) {
+                //     cout << move.first << move.second << " ";
+                // }
+                // cout << endl;
             }
         }
     }
@@ -122,6 +138,7 @@ void Board::updatePossibleMoves() {//can be optmized by adding pieces to board t
 }
 
 bool Board::movePiece(pair<std::string, int> startPos, pair<std::string, int> endPos) {
+    if(startPos.second > 8 || startPos.second < 0) return false;
     Piece* piece = boardCells[startPos.second - 1][startPos.first[0] - 'a'].piece;
     if(piece == nullptr){
         cout << "No piece at the starting position." << endl;
@@ -131,14 +148,26 @@ bool Board::movePiece(pair<std::string, int> startPos, pair<std::string, int> en
         cout << "It's not your turn." << endl;
         return false;
     }
+    Piece* deadPiece =  boardCells[endPos.second - 1][endPos.first[0] - 'a'].piece != nullptr ? boardCells[endPos.second - 1][endPos.first[0] - 'a'].piece : nullptr;
     if(!piece->move(startPos, endPos, boardCells)){
         return false;
     }
+    killPiece(deadPiece);
     return true;
 }
 
-Board::~Board() {
+void Board::killPiece(Piece* deadPiece){
+    if(deadPiece == nullptr) return;
+    this->pieces.erase(find(this->pieces.begin(),this->pieces.end(),deadPiece));
+    this->deadPieces.push_back(deadPiece);
 }
+
+void Board::viewDeadPieces(){
+    if(!deadPieces.empty())
+        for(auto& piece : deadPieces)
+            cout<< piece->abrvName << " " <<  piece->name  << "died at position " << piece->position.first << piece->position.second << endl;
+}
+
 
 // Find the king of a given color on the board
 Piece* Board::findKing(bool isWhite, const vector<vector<Boardcell>>& board) {
@@ -209,6 +238,7 @@ bool Board::isPiecePinned(Piece* piece, const vector<vector<Boardcell>>& board) 
     int checkRow = pieceRow + rowDiff;
     
     while(checkCol != kingCol || checkRow != kingRow) {
+        cout<<"checkRow for piece: "<<checkRow << " " <<checkCol << " " << piece->abrvName<<endl; 
         if(board[checkRow][checkCol].piece != nullptr) {
             return false; // Blocked by another piece
         }
@@ -391,9 +421,9 @@ vector<pair<string, int>> Board::kingCheckPath(const vector<vector<Boardcell>>& 
 vector<pair<string, int>> Board::filterMovesForCheck(Piece* piece, const vector<pair<string, int>>& validMoves, const vector<vector<Boardcell>>& board) {
     vector<pair<string, int>> filteredMoves;
     for(auto& move : piece->possibleMoves) {
-        cout<<"cur move to be checked : " << move.first << move.second << endl;
+        // cout<<"cur move to be checked : " << move.first << move.second << endl;
         if(find(validMoves.begin(),validMoves.end(), move) != validMoves.end()) {
-            cout<<"move found" << endl;
+            // cout<<"move found" << endl;
             filteredMoves.push_back(move);
         }
     }
@@ -429,4 +459,28 @@ bool Board::wouldMoveExposeKing(Piece* piece, const pair<string, int>& movePos, 
     piece->position = originalPos;
     
     return kingInCheck;
+}
+
+bool Board::isCheckmate(bool isWhiteKing, const vector<vector<Boardcell>>& board){
+    Piece* checkedKing = findKing(isWhiteKing,board);
+    if(checkedKing->possibleMoves.empty()){
+        for(auto& piece : pieces)
+            if(piece->isWhite == isWhiteKing && !piece->possibleMoves.empty() && piece->name != "King"){
+                cout<< piece->abrvName << " has moves still" <<endl; 
+                return false;
+            }
+        return true;
+    }
+    return false;
+}
+void Board::resetEverything(){
+    pieces.clear();
+    whitePieces->pieces.clear();
+    blackPieces->pieces.clear();
+    boardCells.clear();
+    isWhiteTurn = true;
+    isCheck = false;
+    isGameOver = false;
+}
+Board::~Board() {
 }

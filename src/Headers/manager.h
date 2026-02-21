@@ -5,10 +5,6 @@
 class Manager {
     public:
     Board* board;
-    WhitePieces* whitePieces;
-    BlackPieces* blackPieces;
-    bool isWhiteTurn;
-    bool isGameOver;
     static Manager* getInstance();
     void initializeGame();
     void displayBoard();

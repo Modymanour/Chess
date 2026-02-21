@@ -1,13 +1,10 @@
 #include "Headers/manager.h"
 #include <iostream>
+#include <unistd.h>
 using namespace std;
 Manager* Manager::instance = nullptr;
 Manager::Manager() {
     board = nullptr;
-    whitePieces = nullptr;
-    blackPieces = nullptr;
-    isWhiteTurn = true;
-    isGameOver = false;
 }
 Manager* Manager::getInstance() {
     if (instance == nullptr) {
@@ -17,23 +14,9 @@ Manager* Manager::getInstance() {
     return instance;
 }
 void Manager::initializeGame() {
-    isWhiteTurn = true;
-    board = Board::getInstance();
-    if(whitePieces == nullptr) whitePieces = new WhitePieces();
-    else whitePieces->pieces.clear();
-    if(blackPieces == nullptr) blackPieces = new BlackPieces();
-    else blackPieces->pieces.clear();
-    
-    whitePieces->initializePieces(board);
-    blackPieces->initializePieces(board);
-    for(auto& row : board->boardCells) {
-        for(auto& cell : row) {
-            if(!cell.isEmpty) {
-                board->pieces.push_back(cell.piece);
-            }
-        }
-    }
-    board->updatePossibleMoves();
+    if(board == nullptr)board = Board::getInstance();
+    else board->resetEverything();
+    board->initializeBoard();
 }
 void Manager::displayBoard() {
     board->displayBoard();
@@ -57,9 +40,7 @@ void Manager::displayPieces() {
     board->displayPieces();
 }
 void Manager::switchTurn() {
-    isWhiteTurn = !isWhiteTurn;
-    board->isWhiteTurn = isWhiteTurn;
-    board->updatePossibleMoves();
+    board->updateBoard();
 }
 void Manager::makeMove(std::pair<std::string, int> startPos, std::pair<std::string, int> endPos) {
     if(board->movePiece(startPos, endPos)) {
@@ -75,32 +56,40 @@ void Manager::loadGame() {
     
 }
 void Manager::endGame() {
-    isGameOver = true;
 }
 void Manager::startGame() {
     string startPos, endPos, pos;
     int choice;
-    while (!isGameOver) {
+    while (true) {
         board->displayBoard();
-        if (isWhiteTurn) {
+        if (board->isWhiteTurn) {
             cout << "White's turn" << endl;
         } else {
             cout << "Black's turn" << endl;
         }
+        if(board->isGameOver){
+            string whoWon = board->isWhiteTurn ? "White" : "Black";
+            cout<<"Good game fellas\n";
+            sleep(0.2);
+            cout << whoWon << " Won!!"<<endl;
+            int whatNow;
+            cout << "1. another game?" << endl;
+            cout << "2. Leave" << endl;
+            cin >> whatNow;
+            switch(whatNow){
+                case 1: {
+                    this->initializeGame();
+                }
+            }
+        }
         cout << "1. Make a move" << endl;
         cout << "2. Display possible moves for a piece" << endl;
-        cout << "3. Save game" << endl;
-        cout << "4. Load game" << endl;
-        cout << "5. Quit game" << endl;
+        cout << "3. Display Dead Pieces" << endl;
+        cout << "4. Save game" << endl;
+        cout << "5. Load game" << endl;
+        cout << "6. Quit game" << endl;
         cout << "Enter your choice: ";
         cin >> choice;
-        
-        if (cin.fail()) {
-            cin.clear();
-            cin.ignore(10000, '\n');
-            cout << "Invalid input. Try again." << endl;
-            continue;
-        }
 
         switch (choice) {
             case 1:
@@ -126,17 +115,21 @@ void Manager::startGame() {
                 }
                 break;
             }
-            case 3:
+            case 3 : {
+                board->viewDeadPieces();
+            }
+            case 4:
                 saveGame();
                 break;
-            case 4:
+            case 5:
                 loadGame();
                 break;
-            case 5:
+            case 6:
                 endGame();
                 break;
             default:
                 cout << "Invalid choice. Try again." << endl;
         }
+        sleep(0.5);
     }
 }

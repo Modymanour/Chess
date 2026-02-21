@@ -16,8 +16,8 @@ vector<pair<string, int>> movement::diagonalMove(const pair<string, int>& startP
         } else {
             if(board[row][col].piece->isWhite != piece->isWhite) {
                 possibleMoves.push_back(make_pair(string(1, col + 'a'), row + 1));
-                board[row][col].threatenedBy.push_back(piece);
             }
+            board[row][col].threatenedBy.push_back(piece);//even if it is the same color piece, it should be defending that piece
             break;
         }
         col--;
@@ -31,10 +31,12 @@ vector<pair<string, int>> movement::diagonalMove(const pair<string, int>& startP
     while(col < 8 && row >= 0) {
         if(board[row][col].isEmpty) {
             possibleMoves.push_back(make_pair(string(1, col + 'a'), row + 1));
+            board[row][col].threatenedBy.push_back(piece);
         } else {
             if(board[row][col].piece->isWhite != piece->isWhite) {
                 possibleMoves.push_back(make_pair(string(1, col + 'a'), row + 1));
             }
+            board[row][col].threatenedBy.push_back(piece);
             break;
         }
         col++;
@@ -48,10 +50,12 @@ vector<pair<string, int>> movement::diagonalMove(const pair<string, int>& startP
     while(col >= 0 && row < 8) {
         if(board[row][col].isEmpty) {
             possibleMoves.push_back(make_pair(string(1, col + 'a'), row + 1));
+            board[row][col].threatenedBy.push_back(piece);
         } else {
             if(board[row][col].piece->isWhite != piece->isWhite) {
                 possibleMoves.push_back(make_pair(string(1, col + 'a'), row + 1));
             }
+            board[row][col].threatenedBy.push_back(piece);
             break;
         }
         col--;
@@ -65,10 +69,12 @@ vector<pair<string, int>> movement::diagonalMove(const pair<string, int>& startP
     while(col < 8 && row < 8) {
         if(board[row][col].isEmpty) {
             possibleMoves.push_back(make_pair(string(1, col + 'a'), row + 1));
+            board[row][col].threatenedBy.push_back(piece);
         } else {
             if(board[row][col].piece->isWhite != piece->isWhite) {
                 possibleMoves.push_back(make_pair(string(1, col + 'a'), row + 1));
             }
+            board[row][col].threatenedBy.push_back(piece);
             break;
         }
         col++;
@@ -86,15 +92,15 @@ vector<pair<string, int>> movement::horizontalMove(const pair<string, int>& star
     //left
     col--;
     while(col >= 0) {
-        cout<< "Checking horizontal left at " << string(1, col + 'a') << row + 1 <<"for " << piece->abrvName << endl;
+        // cout<< "Checking horizontal left at " << string(1, col + 'a') << row + 1 <<"for " << piece->abrvName << endl;
         if(board[row][col].isEmpty) {
             possibleMoves.push_back(make_pair(string(1, col + 'a'), row + 1));
             board[row][col].threatenedBy.push_back(piece);
         } else {
             if(board[row][col].piece->isWhite != piece->isWhite) {
                 possibleMoves.push_back(make_pair(string(1, col + 'a'), row + 1));
-                board[row][col].threatenedBy.push_back(piece);
             }
+            board[row][col].threatenedBy.push_back(piece);
             break;
         }
         col--;
@@ -110,8 +116,8 @@ vector<pair<string, int>> movement::horizontalMove(const pair<string, int>& star
         } else {
             if(board[row][col].piece->isWhite != piece->isWhite) {
                 possibleMoves.push_back(make_pair(string(1, col + 'a'), row + 1));
-                board[row][col].threatenedBy.push_back(piece);
             }
+            board[row][col].threatenedBy.push_back(piece);
             break;
         }
         col++;
@@ -134,8 +140,8 @@ vector<pair<string, int>> movement::verticalMove(const pair<string, int>& startP
         } else {
             if(board[row][col].piece->isWhite != piece->isWhite) {
                 possibleMoves.push_back(make_pair(string(1, col + 'a'), row + 1));
-                board[row][col].threatenedBy.push_back(piece);
             }
+            board[row][col].threatenedBy.push_back(piece);
             break;
         }
         row--;
@@ -154,8 +160,8 @@ vector<pair<string, int>> movement::verticalMove(const pair<string, int>& startP
             if(board[row][col].piece->isWhite != piece->isWhite) {
                     // cout << "Adding vertical up capture move " << string(1, col + 'a') << row + 1 <<" for " << piece->abrvName << endl;
                 possibleMoves.push_back(make_pair(string(1, col + 'a'), row + 1));
-                board[row][col].threatenedBy.push_back(piece);
             }
+            board[row][col].threatenedBy.push_back(piece);
             break;
         }
         row++;
@@ -175,8 +181,8 @@ vector<pair<string, int>> movement::knightMove(const pair<string, int>& startPos
         if(newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
             if(board[newRow][newCol].isEmpty || board[newRow][newCol].piece->isWhite != piece->isWhite) {
                 possibleMoves.push_back(make_pair(string(1, newCol + 'a'), newRow + 1));
-                board[newRow][newCol].threatenedBy.push_back(piece);
             }
+            board[newRow][newCol].threatenedBy.push_back(piece);
         }
     }
     return possibleMoves;
@@ -194,8 +200,8 @@ vector<pair<string, int>> movement::kingMove(const pair<string, int>& startPos, 
         if(newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
             if((board[newRow][newCol].isEmpty || board[newRow][newCol].piece->isWhite != piece->isWhite) && !board[newRow][newCol].isThreatenedByOpponent(piece->isWhite)) {
                 possibleMoves.push_back(make_pair(string(1, newCol + 'a'), newRow + 1));
-                board[newRow][newCol].threatenedBy.push_back(piece);
             }
+            board[newRow][newCol].threatenedBy.push_back(piece);
         }
     }
     return possibleMoves;
